@@ -1,0 +1,88 @@
+body {
+    overflow: clip;
+}
+
+*{
+    color: white;
+}
+
+#add-todo{
+    color: black;
+}
+#new-todo{
+    color: black;
+}
+
+#txt{
+    font-size:100px;
+    position: absolute;
+    height:100vh;
+    width:100vw;
+    left: 0;
+    top: 0;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+#BGImage {
+    left: 0;
+    top: 0;
+    position: absolute;
+    background-repeat: round;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+}
+
+#taskContainer {
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    margin: 10px 5px;
+}
+
+#todo-container {
+    transition: opacity .5s linear;
+    opacity: 1;
+}
+
+#todo-text {
+    width: calc(100% - 10px);
+    display: flex;
+    justify-content: end;
+}
+
+.todo-menu {
+    padding: 10px;
+    background-color: black;
+    opacity: 0.85;
+    border-radius: 10px;
+}
+
+.todo-transition {
+    opacity: 0 !important;
+    position: absolute;
+    bottom: -100vh;
+    pointer-events: none;
+}
+
+*:not(.todo-transition) + #openTODO {
+    opacity: 0 !important;
+    position: absolute;
+    pointer-events: none;
+}
+
+#image-container {
+    position: absolute;
+    display: flex;
+    bottom: 0;
+    left: 0;
+    margin: 10px 5px;
+    font-size:medium;
+}
+#image-container > svg {
+    margin-right: 7px;
+    
+}
