@@ -1,3 +1,4 @@
+// CLOCK
 function startTime() {
     const today = new Date();
     let h = today.getHours();
@@ -8,42 +9,37 @@ function startTime() {
 }
 
 function checkTime(i) {
-    if (i < 10) {
-        i = "0" + i; // Add zero in front of numbers < 10
-    }
-    return i;
+    return i < 10 ? "0" + i : i;
 }
 
 window.addEventListener('load', startTime);
 
+// TO-DO LIST + STATIC BACKGROUND & INFO
 document.addEventListener('DOMContentLoaded', () => {
     const openTODO = document.getElementById('openTODO');
     const closeTODO = document.getElementById('todo-text');
     const todoContainer = document.getElementById('todo-container');
     const newTodoInput = document.getElementById('new-todo');
     const taskContainer = document.getElementById('todo-menu');
+    const BGImage = document.getElementById('BGImage');
+    const imageDescription = document.getElementById('image-description');
+    const imageLink = document.getElementById('image-link');
     const tasksKey = 'tasks';
+    const infoFilePath = 'backgrounds/info.txt';
+    const imagePath = 'backgrounds/1.jpg'; // Static background image
 
+    // Toggle visibility
     function toggleVisibility(container, visibleClass) {
-        if (container.classList.contains(visibleClass)) {
-            container.classList.remove(visibleClass);
-            openTODO.style.opacity = '1';
-            openTODO.style.pointerEvents = 'auto';
-        } else {
-            container.classList.add(visibleClass);
-            openTODO.style.opacity = '0';
-            openTODO.style.pointerEvents = 'none';
-        }
+        container.classList.toggle(visibleClass);
+        const isVisible = container.classList.contains(visibleClass);
+        openTODO.style.opacity = isVisible ? '0' : '1';
+        openTODO.style.pointerEvents = isVisible ? 'none' : 'auto';
     }
 
-    openTODO.addEventListener('click', () => {
-        toggleVisibility(todoContainer, 'todo-container-visible');
-    });
+    openTODO.addEventListener('click', () => toggleVisibility(todoContainer, 'todo-container-visible'));
+    closeTODO.addEventListener('click', () => toggleVisibility(todoContainer, 'todo-container-visible'));
 
-    closeTODO.addEventListener('click', () => {
-        toggleVisibility(todoContainer, 'todo-container-visible');
-    });
-
+    // Task logic
     const loadTasks = () => {
         const tasks = JSON.parse(localStorage.getItem(tasksKey)) || [];
         tasks.forEach(task => addTaskToDOM(task.text, task.completed));
@@ -65,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const addTaskToDOM = (text, completed = false) => {
         const taskItem = document.createElement('div');
         taskItem.classList.add('task-item');
-
         taskItem.innerHTML = `
             <input type="checkbox" class="task-checkbox" ${completed ? 'checked' : ''}>
             <span class="task-text">${text}</span>
@@ -75,12 +70,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const checkbox = taskItem.querySelector('.task-checkbox');
         checkbox.addEventListener('change', () => {
             saveTasks();
-
             if (checkbox.checked) {
                 setTimeout(() => {
-                    if (checkbox.checked) {
-                        removeTaskFromDOM(taskItem);
-                    }
+                    if (checkbox.checked) removeTaskFromDOM(taskItem);
                 }, 20000);
             }
         });
@@ -108,20 +100,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     loadTasks();
-});
 
-document.addEventListener('DOMContentLoaded', () => {
-    const BGImage = document.getElementById('BGImage');
-    const imageDescription = document.getElementById('image-description');
-    const imageLink = document.getElementById('image-link');
-    const infoFilePath = 'backgrounds/info.txt';
-    const imageFolderPath = 'backgrounds/';
-
-    const getDailyIndex = () => {
-        const today = new Date();
-        return today.getDate() % 1; // Change for amount of backgrounds
-    };
-
+    // INFO.TXT + Static Background
     const fetchImageDescriptions = async () => {
         const response = await fetch(infoFilePath);
         if (!response.ok) throw new Error('Failed to load info file');
@@ -132,17 +112,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const setDailyBackground = async () => {
-        const descriptions = await fetchImageDescriptions();
-        const index = getDailyIndex();
-        const imagePath = `${imageFolderPath}${index + 1}.jpg`;
-        const { description = 'No description available', link = '#' } = descriptions[index] || {};
+    const displayStaticInfo = async () => {
+        try {
+            const descriptions = await fetchImageDescriptions();
+            const { description = 'No description available', link = '#' } = descriptions[0] || {};
 
-        BGImage.style.backgroundImage = `url('${imagePath}')`;
-        imageDescription.textContent = description;
-        imageLink.href = link;
+            BGImage.style.backgroundImage = `url('${imagePath}')`;
+            imageDescription.textContent = description;
+            imageLink.href = link;
+        } catch (error) {
+            console.error('Error loading info:', error);
+        }
     };
 
-    setDailyBackground();
+    displayStaticInfo();
 });
+
 
